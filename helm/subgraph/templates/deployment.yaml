@@ -25,6 +25,7 @@ spec:
       containers:
         - name: {{ .Release.Name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: Always
           ports:
             - containerPort: 8040
             - containerPort: 8080
