@@ -21,7 +21,7 @@ resource "argocd_application" "demo" {
     source {
       repo_url        = var.repository
       path            = "helm/demo"
-      target_revision = "training"
+      target_revision = "dev"
 
       helm {
         release_name = var.name

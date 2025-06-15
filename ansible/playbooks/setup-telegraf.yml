@@ -1,0 +1,118 @@
+---
+- name: Step 5 — Install and configure Telegraf monitoring
+  hosts: pi
+  become: true
+
+  vars:
+    influxdb_url: "http://192.168.88.30:8086"
+    influxdb_db: "mydb"
+    influxdb_user: ""
+    influxdb_password: ""
+    gpu_temp_command: "/usr/bin/vcgencmd measure_temp"
+
+  tasks:
+
+    - name: Install dependencies
+      apt:
+        name:
+          - wget
+          - gpg
+          - software-properties-common
+        state: present
+        update_cache: true
+
+    - name: Add InfluxData GPG key
+      shell: |
+        wget -qO- https://repos.influxdata.com/influxdata-archive_compat.key | tee /etc/apt/keyrings/influxdata-archive_compat.key
+      args:
+        creates: /etc/apt/keyrings/influxdata-archive_compat.key
+
+    - name: Add InfluxData APT repository
+      shell: |
+        echo "deb [signed-by=/etc/apt/keyrings/influxdata-archive_compat.key] https://repos.influxdata.com/debian stable main" > /etc/apt/sources.list.d/influxdata.list
+      args:
+        creates: /etc/apt/sources.list.d/influxdata.list
+
+    - name: Update APT package index
+      apt:
+        update_cache: yes
+
+    - name: Install Telegraf
+      apt:
+        name: telegraf
+        state: present
+
+    - name: Create Telegraf config
+      copy:
+        dest: /etc/telegraf/telegraf.conf
+        content: |
+          [agent]
+            interval = "10s"
+            round_interval = true
+            metric_batch_size = 1000
+            metric_buffer_limit = 10000
+            collection_jitter = "0s"
+            flush_interval = "10s"
+            flush_jitter = "0s"
+            precision = ""
+            hostname = ""
+            omit_hostname = false
+
+          [[outputs.influxdb]]
+            urls = ["{{ influxdb_url }}"]
+            database = "{{ influxdb_db }}"
+            username = "{{ influxdb_user }}"
+            password = "{{ influxdb_password }}"
+
+          [[inputs.cpu]]
+            percpu = true
+            totalcpu = true
+            collect_cpu_time = false
+            report_active = false
+
+          [[inputs.mem]]
+
+          [[inputs.disk]]
+            ignore_fs = ["tmpfs", "devtmpfs", "devfs"]
+
+          [[inputs.diskio]]
+
+          [[inputs.net]]
+            interfaces = ["eth0", "wlan0"]
+
+          [[inputs.system]]
+
+          [[inputs.swap]]
+
+          [[inputs.netstat]]
+
+          [[inputs.processes]]
+
+          [[inputs.kernel]]
+
+          [[inputs.file]]
+            files = ["/sys/class/thermal/thermal_zone0/temp"]
+            name_override = "cpu_temperature"
+            data_format = "value"
+            data_type = "integer"
+
+          [[inputs.exec]]
+            commands = ["{{ gpu_temp_command }}"]
+            name_override = "gpu_temperature"
+            data_format = "grok"
+            grok_patterns = ["temp=%{NUMBER:value:float}'C"]
+
+          [global_tags]
+            host = "{{ inventory_hostname }}"
+
+    - name: Add telegraf user to video group
+      user:
+        name: telegraf
+        groups: video
+        append: yes
+
+    - name: Restart telegraf
+      systemd:
+        name: telegraf
+        state: restarted
+        enabled: true

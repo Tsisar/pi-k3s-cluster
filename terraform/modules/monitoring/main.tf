@@ -51,8 +51,9 @@ resource "kubernetes_config_map" "grafana_dashboards" {
   }
 
   data = {
-    "pvc-metrics-dashboard.json" = file("${path.module}/dashboards/pvc-metrics-dashboard.json")
     "node-exporter-dashboard.json" = file("${path.module}/dashboards/node-exporter-dashboard.json")
+    "pvc-metrics-dashboard.json" = file("${path.module}/dashboards/pvc-metrics-dashboard.json")
+    "raspberry-pi-monitoring.json" = file("${path.module}/dashboards/raspberry-pi-monitoring.json")
   }
 }
 

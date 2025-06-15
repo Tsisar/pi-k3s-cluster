@@ -1,4 +1,4 @@
-ANSIBLE_INV=ansible/inventory/pi-cluster.ini
+ANSIBLE_INV=inventory/pi-cluster.ini
 ANSIBLE_DIR=ansible
 TERRAFORM_DIR=terraform
 
@@ -11,6 +11,10 @@ setup-base:
 setup-k3s:
 	@echo "Installing K3s on all nodes..."
 	cd $(ANSIBLE_DIR) && ansible-playbook -i $(ANSIBLE_INV) playbooks/setup-k3s.yml
+
+setup-telegraf:
+	@echo "Setting up Telegraf on all nodes..."
+	cd $(ANSIBLE_DIR) && ansible-playbook -i $(ANSIBLE_INV) playbooks/setup-telegraf.yml
 
 plan:
 	@echo "Running terraform plan..."
