@@ -28,7 +28,7 @@ locals {
     demo            = "demo.${var.domain_external}"
     postgres        = "postgres.${var.domain_local}"
     hasura          = "hasura.${var.domain_external}"
-    subgraph        = "subgraph.${var.domain_external}"
+    subgraph        = "stablecoin.${var.domain_external}"
   }
 
 }

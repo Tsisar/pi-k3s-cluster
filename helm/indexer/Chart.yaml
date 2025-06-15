@@ -1,0 +1,15 @@
+apiVersion: v2
+name       : Subgraph
+description: Subgraph Helm chart for Kubernetes
+type       : application
+version    : 0.1.0   # This is the Helm Chart version
+appVersion : "latest" # This is the version of the application being deployed
+
+keywords:
+  - subgraph
+  - desynclabs
+
+maintainers:
+  - name : Pavlo Tsisar
+    email: pavlo.tsisar@desynclabs.com
+    url  : desynclabs.com
