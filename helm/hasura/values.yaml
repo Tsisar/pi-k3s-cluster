@@ -6,7 +6,7 @@ env:
   postgres:
     host: postgres-service
     port: 5432
-    db: solana-indexer
+    db: indexer
   log:
     level: debug
     save: true
