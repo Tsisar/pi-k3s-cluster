@@ -184,7 +184,14 @@ module "demo" {
 module "indexer" {
   source    = "./modules/indexer"
   for_each  = local.enabled_modules.indexer ? { "enabled" = {} } : {}
-  host      = local.hosts.indexer
   name      = "indexer"
   namespace = "indexer"
+  host_hasura = local.hosts.hasura
+  host_subgraph = local.hosts.subgraph
+  repository = module.infra["enabled"].repository
+
+  depends_on = [
+    module.argo_cd,
+    module.infra
+  ]
 }
