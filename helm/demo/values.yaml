@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ptsisar/devops-types
-  tag: latest
+  tag: v0.1.0
 
 ingress:
   host: "demo.tsisar.com.ua"

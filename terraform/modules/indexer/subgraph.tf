@@ -1,4 +1,4 @@
-resource "argocd_application" "hasura" {
+resource "argocd_application" "subgraph" {
   metadata {
     name      = "${var.name}-subgraph"
     namespace = "argocd"
@@ -21,8 +21,8 @@ resource "argocd_application" "hasura" {
     }
 
     source {
-      repo_url        = "git@github.com:desync-labs/splyce-infrastructure.git"
-      path            = "k8s/subgraph"
+      repo_url        = var.repository
+      path            = "helm/subgraph"
       target_revision = var.branch
 
       helm {
@@ -39,8 +39,8 @@ resource "argocd_application" "hasura" {
         }
 
         parameter {
-          name  = "env.ingress.host"
-          value = var.host
+          name  = "ingress.host"
+          value = var.host_subgraph
         }
       }
     }

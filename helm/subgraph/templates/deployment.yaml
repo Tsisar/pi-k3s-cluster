@@ -22,8 +22,6 @@ spec:
         prometheus.io/port: "8040"
         prometheus.io/path: "/metrics"
     spec:
-      imagePullSecrets:
-        - name: docker-credentials
       containers:
         - name: {{ .Release.Name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

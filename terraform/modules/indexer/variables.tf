@@ -32,7 +32,17 @@ variable "branch" {
   default     = "dev"
 }
 
-variable "host" {
+variable "repository" {
+  description = "GitHub repository URL"
+  type        = string
+}
+
+variable "host_hasura" {
+  description = "The external host"
+  type        = string
+}
+
+variable "host_subgraph" {
   description = "The external host"
   type        = string
 }

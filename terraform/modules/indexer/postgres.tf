@@ -33,8 +33,8 @@ resource "argocd_application" "postgres" {
     }
 
     source {
-      repo_url        = "git@github.com:desync-labs/splyce-infrastructure.git"
-      path            = "k8s/postgres"
+      repo_url        = var.repository
+      path            = "helm/postgres"
       target_revision = var.branch
 
       helm {
@@ -43,6 +43,11 @@ resource "argocd_application" "postgres" {
         parameter {
           name  = "env.postgres_db"
           value = var.postgres_db
+        }
+
+        parameter {
+          name  = "service.nodeport"
+          value = "30032"
         }
       }
     }

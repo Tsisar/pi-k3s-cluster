@@ -21,8 +21,8 @@ resource "argocd_application" "hasura" {
     }
 
     source {
-      repo_url        = "git@github.com:desync-labs/splyce-infrastructure.git"
-      path            = "k8s/hasura"
+      repo_url        = var.repository
+      path            = "helm/hasura"
       target_revision = var.branch
 
       helm {
@@ -40,7 +40,7 @@ resource "argocd_application" "hasura" {
 
         parameter {
           name  = "env.ingress.host"
-          value = var.host
+          value = var.host_hasura
         }
       }
     }
