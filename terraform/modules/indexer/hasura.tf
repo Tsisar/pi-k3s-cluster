@@ -40,7 +40,7 @@ resource "argocd_application" "hasura" {
 
         parameter {
           name  = "env.ingress.host"
-          value = var.host
+          value = var.host_hasura
         }
       }
     }

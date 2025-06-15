@@ -26,8 +26,9 @@ locals {
     vault_local     = "vault.${var.domain_local}"
     vault_external  = "vault.${var.domain_external}"
     demo            = "demo.${var.domain_external}"
-    indexer         = "hasura.${var.domain_external}"
     postgres        = "postgres.${var.domain_local}"
+    hasura          = "hasura.${var.domain_external}"
+    subgraph        = "subgraph.${var.domain_external}"
   }
 
 }
@@ -181,15 +182,9 @@ module "demo" {
 
 # Indexer Module for Solana
 module "indexer" {
-  source     = "./modules/indexer"
-  for_each   = local.enabled_modules.indexer ? { "enabled" = {} } : {}
-  host       = local.hosts.indexer
-  repository = module.infra["enabled"].repository
-  name       = "indexer"
-  namespace  = "indexer"
-
-  depends_on = [
-    module.argo_cd,
-    module.infra
-  ]
+  source    = "./modules/indexer"
+  for_each  = local.enabled_modules.indexer ? { "enabled" = {} } : {}
+  host      = local.hosts.indexer
+  name      = "indexer"
+  namespace = "indexer"
 }
