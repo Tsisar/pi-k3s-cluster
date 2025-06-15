@@ -58,7 +58,8 @@ spec:
               value: {{ .Values.env.log.level | quote }}
             - name: LOG_SAVE
               value: {{ .Values.env.log.save | quote }}
-
+            - name: VERSION
+              value: {{ .Values.image.tag | quote }}
           {{- range .Values.contracts }}
             - name: {{ .name }}
               value: {{ .value | quote }}
