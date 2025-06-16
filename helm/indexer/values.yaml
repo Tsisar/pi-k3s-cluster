@@ -3,7 +3,6 @@ image:
   tag: latest
 
 env:
-  indexer_name: "starknet-stablecoin"
   postgres:
     host: postgres-service
     port: 5432
