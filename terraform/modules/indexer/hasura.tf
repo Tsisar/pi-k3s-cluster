@@ -82,15 +82,6 @@ resource "kubernetes_secret" "hasura_credentials" {
   }
 }
 
-resource "vault_generic_secret" "hasura" {
-  path = "secret/hasura"
-
-  data_json = jsonencode({
-    user     = var.hasura_user,
-    password = random_password.hasura_password.result
-  })
-}
-
 output "hasura_user" {
   value = var.hasura_user
 }

@@ -42,6 +42,16 @@ resource "argocd_application" "subgraph" {
           name  = "ingress.host"
           value = var.host_subgraph
         }
+
+        parameter {
+          name  = "env.rpc.endpoint"
+          value = data.vault_generic_secret.rpc.data["http"]
+        }
+
+        parameter {
+          name  = "env.rpc.ws_endpoint"
+          value = data.vault_generic_secret.rpc.data["ws"]
+        }
       }
     }
 

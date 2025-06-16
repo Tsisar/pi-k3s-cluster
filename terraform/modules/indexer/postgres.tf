@@ -96,15 +96,6 @@ resource "kubernetes_secret" "postgres_credentials" {
   }
 }
 
-resource "vault_generic_secret" "postgres" {
-  path = "secret/postgres"
-
-  data_json = jsonencode({
-    user     = var.postgres_user,
-    password = random_password.postgres_password.result
-  })
-}
-
 output "postgres_user" {
   value = var.postgres_user
 }

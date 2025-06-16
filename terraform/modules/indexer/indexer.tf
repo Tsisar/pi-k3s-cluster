@@ -38,6 +38,16 @@ resource "argocd_application" "indexer" {
           value = "${argocd_application.postgres.metadata[0].name}-service"
         }
 
+        parameter {
+          name  = "env.rpc.endpoint"
+          value = data.vault_generic_secret.rpc.data["http"]
+        }
+
+        parameter {
+          name  = "env.rpc.ws_endpoint"
+          value = data.vault_generic_secret.rpc.data["ws"]
+        }
+
       }
     }
 
