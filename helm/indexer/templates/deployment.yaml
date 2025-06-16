@@ -28,6 +28,8 @@ spec:
           ports:
             - containerPort: 8040
           env:
+            - name: INDEXER_NAME
+              value: {{ .Values.env.indexer_name | quote }}
             - name: POSTGRES_HOST
               value: {{ .Values.env.postgres.host }}
             - name: POSTGRES_PORT
