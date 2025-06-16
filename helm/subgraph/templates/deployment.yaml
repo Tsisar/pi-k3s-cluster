@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-deployment
   labels:
-    owner: tsisar
     app.kubernetes.io/instance: {{ .Release.Namespace }}
     app.kubernetes.io/name: {{ .Release.Name }}
 spec:

@@ -9,37 +9,29 @@ spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 0
       maxUnavailable: 1
+  minReadySeconds: 60 # warm up the cache before deleting old pods
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
     spec:
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
       containers:
         - name: {{ .Release.Name }}-container
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: Always
           ports:
-            - containerPort: 8080
-          env:
-            - name: VERSION
-              value: {{ .Values.image.tag }}
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 20
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 20
-          resources:
-{{ toYaml .Values.resources | indent 12 }}
+            - containerPort: 80
+            - containerPort: 443
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf

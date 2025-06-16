@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-service
   labels:
-    owner: tsisar
     app.kubernetes.io/instance: {{ .Release.Namespace }}
     app.kubernetes.io/name: {{ .Release.Name }}
 spec:

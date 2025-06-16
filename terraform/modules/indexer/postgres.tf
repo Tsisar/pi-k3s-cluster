@@ -82,7 +82,6 @@ resource "kubernetes_secret" "postgres_credentials" {
     namespace = kubernetes_namespace.indexer.metadata[0].name
 
     labels = {
-      owner                        = "desynclabs"
       "app.kubernetes.io/instance" = kubernetes_namespace.indexer.metadata[0].name
       "app.kubernetes.io/name"     = "${var.name}-postgres"
     }

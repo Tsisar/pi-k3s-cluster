@@ -7,7 +7,6 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   labels:
-    owner: tsisar
     app.kubernetes.io/instance: {{ .Release.Namespace }}
     app.kubernetes.io/name: {{ .Release.Name }}
 spec:

@@ -7,9 +7,7 @@ appVersion : "latest" # This is the version of the application being deployed
 
 keywords:
   - subgraph
-  - desynclabs
 
 maintainers:
   - name : Pavlo Tsisar
     email: pavlo.tsisar@desynclabs.com
-    url  : desynclabs.com
