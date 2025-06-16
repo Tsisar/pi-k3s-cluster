@@ -1,0 +1,6 @@
+image:
+  repository: nginx
+  tag: latest
+
+ingress:
+  host: indexer.tsisar.com.ua

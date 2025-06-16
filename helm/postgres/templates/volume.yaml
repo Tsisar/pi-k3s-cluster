@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-volume
   labels:
-    owner: tsisar
     app.kubernetes.io/instance: {{ .Release.Namespace }}
     app.kubernetes.io/name: {{ .Release.Name }}
 spec:

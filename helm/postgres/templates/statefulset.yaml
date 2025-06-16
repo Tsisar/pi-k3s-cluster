@@ -3,7 +3,6 @@ kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-statefulset
   labels:
-    owner: tsisar
     app.kubernetes.io/instance: {{ .Release.Namespace }}
     app.kubernetes.io/name: {{ .Release.Name }}
 spec:
