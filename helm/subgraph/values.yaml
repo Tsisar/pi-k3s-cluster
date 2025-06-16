@@ -1,6 +1,6 @@
 image:
   repository: intothefathom/starknet-indexer.stablecoin.subgraph
-  tag: dev-e56bc6b
+  tag: latest
 
 env:
   postgres:
