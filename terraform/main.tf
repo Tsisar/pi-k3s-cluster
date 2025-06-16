@@ -186,8 +186,8 @@ module "demo" {
 module "indexer" {
   source        = "./modules/indexer"
   for_each      = local.enabled_modules.indexer ? { "enabled" = {} } : {}
-  name          = "indexer"
-  namespace     = "indexer"
+  name          = "starknet-stablecoin"
+  namespace     = "starknet-stablecoin"
   host_hasura   = local.hosts.hasura
   host_subgraph = local.hosts.subgraph
   repository    = module.infra["enabled"].repository
@@ -206,4 +206,9 @@ module "proxy" {
   namespace  = "indexer-proxy"
   host       = local.hosts.indexer
   repository = module.infra["enabled"].repository
+
+  depends_on = [
+    module.argo_cd,
+    module.infra
+  ]
 }

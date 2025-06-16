@@ -85,7 +85,7 @@ resource "argocd_application" "proxy" {
 
     source {
       repo_url        = var.repository
-      path            = "helm/postgres"
+      path            = "helm/proxy"
       target_revision = var.branch
 
       helm {
