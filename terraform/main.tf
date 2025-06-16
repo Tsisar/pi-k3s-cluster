@@ -202,8 +202,8 @@ module "proxy" {
   source   = "./modules/proxy"
   for_each = local.enabled_modules.proxy ? { "enabled" = {} } : {}
 
-  name       = "indexr-proxy"
-  namespace  = "indexr-proxy"
+  name       = "indexer-proxy"
+  namespace  = "indexer-proxy"
   host       = local.hosts.indexer
   repository = module.infra["enabled"].repository
 }
