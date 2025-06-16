@@ -13,22 +13,24 @@ locals {
     repository_deploy_key = local.current_stage >= 2
     demo                  = local.current_stage >= 2
     indexer               = local.current_stage >= 2
+    nginxproxymanager     = local.current_stage >= 2
   }
 
   hosts = {
-    vault_local     = "vault.${var.domain_local}"
-    vault_external  = "vault.${var.domain_external}"
-    redis           = "redis.${var.domain_local}"
-    redis_commander = "redis-commander.${var.domain_local}"
-    prometheus      = "prometheus.${var.domain_local}"
-    grafana         = "grafana.${var.domain_local}"
-    argo            = "argo.${var.domain_external}"
-    vault_local     = "vault.${var.domain_local}"
-    vault_external  = "vault.${var.domain_external}"
-    demo            = "demo.${var.domain_external}"
-    postgres        = "postgres.${var.domain_local}"
-    hasura          = "hasura.${var.domain_external}"
-    subgraph        = "stablecoin.${var.domain_external}"
+    vault_local       = "vault.${var.domain_local}"
+    vault_external    = "vault.${var.domain_external}"
+    redis             = "redis.${var.domain_local}"
+    redis_commander   = "redis-commander.${var.domain_local}"
+    prometheus        = "prometheus.${var.domain_local}"
+    grafana           = "grafana.${var.domain_local}"
+    argo              = "argo.${var.domain_external}"
+    vault_local       = "vault.${var.domain_local}"
+    vault_external    = "vault.${var.domain_external}"
+    demo              = "demo.${var.domain_external}"
+    postgres          = "postgres.${var.domain_local}"
+    hasura            = "hasura.${var.domain_external}"
+    subgraph          = "stablecoin.${var.domain_external}"
+    nginxproxymanager = var.domain_external
   }
 
 }
@@ -182,16 +184,24 @@ module "demo" {
 
 # Indexer Module for Solana
 module "indexer" {
-  source    = "./modules/indexer"
-  for_each  = local.enabled_modules.indexer ? { "enabled" = {} } : {}
-  name      = "indexer"
-  namespace = "indexer"
-  host_hasura = local.hosts.hasura
+  source        = "./modules/indexer"
+  for_each      = local.enabled_modules.indexer ? { "enabled" = {} } : {}
+  name          = "indexer"
+  namespace     = "indexer"
+  host_hasura   = local.hosts.hasura
   host_subgraph = local.hosts.subgraph
-  repository = module.infra["enabled"].repository
+  repository    = module.infra["enabled"].repository
 
   depends_on = [
     module.argo_cd,
     module.infra
   ]
+}
+
+module "nginxproxymanager" {
+  source   = "./modules/nginxproxymanager"
+  for_each = local.enabled_modules.nginxproxymanager ? { "enabled" = {} } : {}
+
+  host        = local.hosts.nginxproxymanager
+  admin_email = var.email
 }
