@@ -42,11 +42,6 @@ variable "host_hasura" {
   type        = string
 }
 
-variable "host_subgraph" {
-  description = "The external host"
-  type        = string
-}
-
 variable "hasura_user" {
   description = "Hasura user"
   type        = string

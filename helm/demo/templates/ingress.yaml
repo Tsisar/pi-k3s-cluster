@@ -19,7 +19,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-service
+                name: {{ .Release.Name }}-stable
                 port:
                   name: http
   tls:

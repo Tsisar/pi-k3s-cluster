@@ -29,7 +29,6 @@ locals {
     demo            = "demo.${var.domain_external}"
     postgres        = "postgres.${var.domain_local}"
     hasura          = "hasura.${var.domain_external}"
-    subgraph        = "stablecoin.${var.domain_external}"
     indexer         = "indexer.${var.domain_external}"
   }
 
@@ -145,31 +144,13 @@ module "argo_cd" {
   ]
 }
 
-# resource "null_resource" "bump_stage_to_3" {
-#   provisioner "local-exec" {
-#     command = "jq '.stage = \"3\"' ${path.module}/scripts/stage.json > ${path.module}/scripts/stage.tmp && mv ${path.module}/scripts/stage.tmp ${path.module}/scripts/stage.json"
-#   }
-#
-#   triggers = {
-#     always_run = timestamp()
-#   }
-#
-#   depends_on = [
-#     module.cluster_issuer,
-#     module.vault_config,
-#     module.monitoring,
-#     module.argo_cd
-#   ]
-# }
-
-# ================= Stage-3 ====================
-
 # Setting up Deploy Key in GitHub repository and connecting it to ArgoCD
 module "infra" {
   source   = "./modules/infra-repository"
   for_each = local.enabled_modules.repository_deploy_key ? { "enabled" = {} } : {}
 }
 
+# Demo Module
 module "demo" {
   source     = "./modules/demo"
   for_each   = local.enabled_modules.demo ? { "enabled" = {} } : {}
@@ -182,14 +163,13 @@ module "demo" {
   ]
 }
 
-# Indexer Module for Solana
+# Indexer Module
 module "indexer" {
   source        = "./modules/indexer"
   for_each      = local.enabled_modules.indexer ? { "enabled" = {} } : {}
   name          = "starknet-stablecoin"
   namespace     = "starknet-stablecoin"
   host_hasura   = local.hosts.hasura
-  host_subgraph = local.hosts.subgraph
   repository    = module.infra["enabled"].repository
 
   depends_on = [

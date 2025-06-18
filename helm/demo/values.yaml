@@ -7,6 +7,16 @@ image:
 ingress:
   host: "demo.tsisar.com.ua"
 
+rollout:
+  canary:
+    steps:
+      - weight: 25
+        pause: true
+      - weight: 50
+        pause: true
+      - weight: 100
+        pause: false
+
 resources:
   limits:
     cpu: "100m"

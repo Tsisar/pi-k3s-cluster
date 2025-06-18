@@ -60,6 +60,25 @@ resource "helm_release" "argo_cd" {
   ]
 }
 
+resource "helm_release" "argo_rollouts" {
+  name       = "argo-rollouts"
+  namespace  = "argo-rollouts"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-rollouts"
+  version    = "2.39.6"
+
+  create_namespace = true
+
+  values = [
+    <<-EOF
+      controller:
+        replicaCount: 1
+      dashboard:
+        enabled: true
+    EOF
+  ]
+}
+
 # Ingress resource for Argo CD with Let's Encrypt certificate
 resource "kubernetes_ingress_v1" "argo_cd" {
   metadata {
