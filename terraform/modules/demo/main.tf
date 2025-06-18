@@ -27,11 +27,29 @@ resource "argocd_application" "demo" {
         release_name = var.name
         value_files = ["values.yaml"]
         values = yamlencode({
-          replicaCount = 1
-          ingress = {
-            host = var.host
+          rollout = {
+            canary = {
+              steps = [
+                {
+                  weight = 25
+                  pause  = true
+                },
+                {
+                  weight = 50
+                  pause  = true
+                },
+                {
+                  weight = 100
+                  pause  = true
+                }
+              ]
+            }
           }
         })
+        parameter {
+          name  = "ingress.host"
+          value = var.host
+        }
       }
     }
 
