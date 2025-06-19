@@ -1,6 +1,6 @@
 image:
   repository: intothefathom/starknet-indexer.stablecoin.subgraph
-  tag: latest
+  tag: latest-linux-arm64
 
 env:
   indexer_name: "starknet-stablecoin"

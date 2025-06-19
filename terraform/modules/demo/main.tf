@@ -40,7 +40,7 @@ resource "argocd_application" "demo" {
                 },
                 {
                   weight = 100
-                  pause  = true
+                  pause  = false
                 }
               ]
             }
