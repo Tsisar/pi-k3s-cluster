@@ -165,27 +165,15 @@ module "demo" {
 
 # Indexer Module
 module "indexer" {
-  source        = "./modules/indexer"
-  for_each      = local.enabled_modules.indexer ? { "enabled" = {} } : {}
-  name          = "starknet-stablecoin"
-  namespace     = "starknet-stablecoin"
-  host_hasura   = local.hosts.hasura
-  repository    = module.infra["enabled"].repository
-
-  depends_on = [
-    module.argo_cd,
-    module.infra
-  ]
-}
-
-module "proxy" {
-  source   = "./modules/proxy"
-  for_each = local.enabled_modules.proxy ? { "enabled" = {} } : {}
-
-  name       = "indexer-proxy"
-  namespace  = "indexer-proxy"
-  host       = local.hosts.indexer
-  repository = module.infra["enabled"].repository
+  source          = "./modules/indexer"
+  for_each        = local.enabled_modules.indexer ? { "enabled" = {} } : {}
+  name            = "starknet"
+  namespace       = "indexer"
+  repository      = "https://github.com/tsisar/starknet-indexer.git"
+  branch          = "dev"
+  rpc_endpoint    = var.rpc_endpoint
+  rpc_ws_endpoint = var.rpc_ws_endpoint
+  host            = local.hosts.indexer
 
   depends_on = [
     module.argo_cd,

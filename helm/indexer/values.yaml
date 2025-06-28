@@ -1,29 +1,63 @@
-image:
-  repository: intothefathom/starknet-indexer.stablecoin.indexer
-  tag: latest
-
-env:
-  indexer_name: "starknet-stablecoin"
-  postgres:
-    host: postgres-service
-    port: 5432
-    db: indexer
-
+# This file contains the configuration for the Indexer Helm chart.
+config:
+  enabled: true
+  name: "stablecoin"
   rpc:
     endpoint: "https://lb.drpc.org/ogrpc?network=starknet&dkey=xxx"
     ws_endpoint: "wss://lb.drpc.org/ogws?network=starknet&dkey=xxx"
 
-  start_block: "1417000"
+# Postgres component configuration
+postgres:
+  enabled: true
+  container:
+    image: postgres:16
+
+  # Authentication configuration
+  auth:
+    username: postgres
+    password: postgres
+
+  env:
+    db: indexer
+
+  service:
+    port: 5432
+    nodePort: 30032
+
+  storage:
+    size: 10Gi
+
+
+# Indexer component configuration
+indexer:
+  enabled: true
+  image:
+    repository: ghcr.io/tsisar/indexer.starknet.stablecoin.indexer
+    tag: latest-arm64
+
   resume_from_last_signature: false
 
   log:
     level: debug
     save: true
 
-resources:
-  requests:
-    cpu: 200m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 512Mi
+# Subgraph component configuration
+subgraph:
+  enabled: true
+  image:
+    repository: ghcr.io/tsisar/indexer.starknet.stablecoin.subgraph
+    tag: latest-arm64
+
+  log:
+    level: debug
+    save: true
+
+# Proxy component configuration
+proxy:
+  enabled: true
+  image:
+    repository: nginx
+    tag: latest
+
+  ingress:
+    host: indexer.tsisar.com.ua

@@ -1,14 +1,15 @@
+{{- if .Values.proxy.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-deployment
+  name: {{ .Release.Name }}-proxy
   labels:
-    app.kubernetes.io/instance: {{ .Release.Namespace }}
-    app.kubernetes.io/name: {{ .Release.Name }}
+    {{- include "application.labels" . | nindent 4 }}
+    component: proxy
 spec:
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-proxy
   replicas: 1
   strategy:
     type: RollingUpdate
@@ -19,15 +20,16 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ .Release.Name }}-proxy
+        component: proxy
     spec:
       volumes:
         - name: config
           configMap:
-            name: {{ .Release.Name }}-config
+            name: {{ .Release.Name }}-proxy
       containers:
-        - name: {{ .Release.Name }}-container
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        - name: proxy
+          image: {{ .Values.proxy.image.repository }}:{{ .Values.proxy.image.tag }}
           ports:
             - containerPort: 80
             - containerPort: 443
@@ -35,3 +37,4 @@ spec:
             - name: config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+{{- end }} 

@@ -1,0 +1,21 @@
+{{- if .Values.subgraph.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-subgraph
+  labels:
+    app: {{ .Release.Name }}-subgraph
+    component: subgraph
+spec:
+  selector:
+    app: {{ .Release.Name }}-subgraph
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: metrics
+      port: 8040
+      targetPort: 8040
+      protocol: TCP
+{{- end }} 

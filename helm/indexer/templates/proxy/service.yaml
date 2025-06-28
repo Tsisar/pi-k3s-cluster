@@ -1,0 +1,21 @@
+{{- if .Values.proxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-proxy
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+    component: proxy
+spec:
+  selector:
+    app: {{ .Release.Name }}-proxy
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 443
+      protocol: TCP
+{{- end }} 

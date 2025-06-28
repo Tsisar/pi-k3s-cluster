@@ -1,0 +1,12 @@
+{{- if .Values.config.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-contracts
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+    component: indexer
+data:
+  stablecoin.json: |
+    {{ .Files.Get "stablecoin.json" | indent 4 }}
+{{- end }}

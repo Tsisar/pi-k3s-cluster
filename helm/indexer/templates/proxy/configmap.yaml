@@ -1,0 +1,12 @@
+{{- if .Values.proxy.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-proxy
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+    component: proxy
+data:
+  nginx.conf: |
+    {{- tpl (.Files.Get "files/nginx.conf.tpl") . | nindent 4 }}
+{{- end }}

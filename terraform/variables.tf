@@ -52,3 +52,15 @@ variable "github_token" {
   type        = string
   sensitive   = true
 }
+
+variable "rpc_endpoint" {
+  description = "RPC endpoint for Starknet"
+  type        = string
+  default     = "https://rpc.testnet.starknet.io"
+}
+
+variable "rpc_ws_endpoint" {
+  description = "RPC WebSocket endpoint for Starknet"
+  type        = string
+  default     = "wss://rpc.testnet.starknet.io/ws"
+}

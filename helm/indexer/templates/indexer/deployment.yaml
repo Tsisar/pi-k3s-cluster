@@ -1,0 +1,76 @@
+{{- if .Values.indexer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-indexer
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+    component: indexer
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-indexer
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-indexer
+        component: indexer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8040"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: indexer
+          image: {{ .Values.indexer.image.repository }}:{{ .Values.indexer.image.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8040
+          env:
+            - name: INDEXER_NAME
+              value: {{ .Values.config.name | quote }}
+            - name: POSTGRES_HOST
+              value: {{ .Release.Name }}-postgres
+            - name: POSTGRES_PORT
+              value: {{ .Values.postgres.service.port | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.env.db | default "indexer" }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgres
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgres
+                  key: password
+            - name: RPC_ENDPOINT
+              value: {{ .Values.config.rpc.endpoint | quote }}
+            - name: RPC_WS_ENDPOINT
+              value: {{ .Values.config.rpc.ws_endpoint | quote }}
+            - name: RESUME_FROM_LAST_SIGNATURE
+              value: {{ .Values.indexer.resume_from_last_signature | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.indexer.log.level | quote }}
+            - name: LOG_SAVE
+              value: {{ .Values.indexer.log.save | quote }}
+          volumeMounts:
+            - name: stablecoin-config
+              mountPath: /app/config/stablecoin.json
+              subPath: stablecoin.json
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+      volumes:
+        - name: stablecoin-config
+          configMap:
+            name: {{ .Release.Name }}-contracts
+{{- end }}

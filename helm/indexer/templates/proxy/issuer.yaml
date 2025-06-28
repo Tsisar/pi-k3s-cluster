@@ -1,17 +1,19 @@
+{{- if .Values.proxy.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ .Release.Name }}-issuer
+  name: {{ .Release.Name }}-proxy
   labels:
-    app.kubernetes.io/instance: {{ .Release.Namespace }}
-    app.kubernetes.io/name: {{ .Release.Name }}
+    {{- include "application.labels" . | nindent 4 }}
+    component: proxy
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: pavlo.tsisar@desynclabs.com
     privateKeySecretRef:
-      name: {{ .Release.Name }}-letsencrypt-private-key
+      name: {{ .Release.Name }}-proxy-letsencrypt-private-key
     solvers:
     - http01:
         ingress:
           class: nginx
+{{- end }} 

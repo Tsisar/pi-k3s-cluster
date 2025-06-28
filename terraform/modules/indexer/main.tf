@@ -1,9 +1,9 @@
-resource "argocd_application" "subgraph" {
+resource "argocd_application" "indexer" {
   metadata {
-    name      = "${var.name}-subgraph"
+    name      = "${var.name}-indexer"
     namespace = "argocd"
     labels = {
-      app     = "${var.name}-subgraph"
+      app     = "${var.name}-indexer"
       type    = var.type
       project = var.project
       network = var.network
@@ -22,30 +22,35 @@ resource "argocd_application" "subgraph" {
 
     source {
       repo_url        = var.repository
-      path            = "helm/subgraph"
+      path            = "helm"
       target_revision = var.branch
 
       helm {
-        value_files = ["values.yaml", "contracts.yaml"]
+        value_files = ["values.yaml"]
 
         parameter {
-          name  = "env.postgres.db"
-          value = var.postgres_db
+          name  = "postgres.auth.username"
+          value = var.postgres_username
         }
 
         parameter {
-          name  = "env.postgres.host"
-          value = "${argocd_application.postgres.metadata[0].name}-service"
+          name  = "postgres.auth.password"
+          value = random_password.postgres_password.result
         }
 
         parameter {
-          name  = "env.rpc.endpoint"
-          value = data.vault_generic_secret.rpc.data["http"]
+          name  = "config.rpc.endpoint"
+          value = var.rpc_endpoint
         }
 
         parameter {
-          name  = "env.rpc.ws_endpoint"
-          value = data.vault_generic_secret.rpc.data["ws"]
+          name  = "config.rpc.ws_endpoint"
+          value = var.rpc_ws_endpoint
+        }
+
+        parameter {
+          name  = "ingress.host"
+          value = var.host
         }
       }
     }

@@ -1,11 +1,13 @@
 variable "name" {
   description = "The name of the project"
   type        = string
+  default     = "starknet-indexer"
 }
 
 variable "namespace" {
   description = "Namespace"
   type        = string
+  default     = "indexer"
 }
 
 variable "type" {
@@ -23,7 +25,7 @@ variable "project" {
 variable "network" {
   description = "Network"
   type        = string
-  default     = "crosschain"
+  default     = "starknet"
 }
 
 variable "repository" {
@@ -37,13 +39,23 @@ variable "branch" {
   default     = "dev"
 }
 
-variable "host_hasura" {
-  description = "The external host"
+variable "postgres_username" {
+  description = "Postgres user"
+  type        = string
+  default     = "indexer"
+}
+
+variable "rpc_endpoint" {
+  description = "RPC endpoint"
   type        = string
 }
 
-variable "hasura_user" {
-  description = "Hasura user"
+variable "rpc_ws_endpoint" {
+  description = "RPC WS endpoint"
   type        = string
-  default     = "admin"
+}
+
+variable "host" {
+    description = "Host for the indexer service"
+    type        = string
 }

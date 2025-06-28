@@ -1,39 +1,41 @@
+{{- if .Values.postgres.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Release.Name }}-statefulset
+  name: {{ .Release.Name }}-postgres
   labels:
-    app.kubernetes.io/instance: {{ .Release.Namespace }}
-    app.kubernetes.io/name: {{ .Release.Name }}
+    {{- include "application.labels" . | nindent 4 }}
+    component: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-postgres
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ .Release.Name }}-postgres
+        component: postgres
     spec:
       containers:
-        - name: {{ .Release.Name }}-docker
-          image: {{ .Values.container.image }}
+        - name: postgres
+          image: {{ .Values.postgres.container.image }}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.postgres.service.port }}
           env:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: {{ .Release.Name }}-postgres
                   key: user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: {{ .Release.Name }}-postgres
                   key: password
             - name: POSTGRES_DB
-              value: {{ .Values.env.postgres_db }}
+              value: {{ .Values.postgres.env.db | default "indexer" }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_INITDB_ARGS
@@ -58,7 +60,12 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 5
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+            requests:
+              cpu: "1000m"
+              memory: "2Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
         - name: pvc-metrics
           image: intothefathom/pvc-metrics:latest
           imagePullPolicy: Always
@@ -70,4 +77,5 @@ spec:
       volumes:
         - name: storage
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-volume
+            claimName: {{ .Release.Name }}-postgres
+{{- end }} 

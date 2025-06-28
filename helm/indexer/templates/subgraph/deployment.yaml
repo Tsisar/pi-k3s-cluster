@@ -1,0 +1,74 @@
+{{- if .Values.subgraph.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-subgraph
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+    component: subgraph
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-subgraph
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-subgraph
+        component: subgraph
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8040"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: subgraph
+          image: {{ .Values.subgraph.image.repository }}:{{ .Values.subgraph.image.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8040
+          env:
+            - name: subgraph_NAME
+              value: {{ .Values.config.name | quote }}
+            - name: POSTGRES_HOST
+              value: {{ .Release.Name }}-postgres
+            - name: POSTGRES_PORT
+              value: {{ .Values.postgres.service.port | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.env.db | default "subgraph" }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgres
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgres
+                  key: password
+            - name: RPC_ENDPOINT
+              value: {{ .Values.config.rpc.endpoint | quote }}
+            - name: RPC_WS_ENDPOINT
+              value: {{ .Values.config.rpc.ws_endpoint | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.subgraph.log.level | quote }}
+            - name: LOG_SAVE
+              value: {{ .Values.subgraph.log.save | quote }}
+          volumeMounts:
+            - name: stablecoin-config
+              mountPath: /app/config/stablecoin.json
+              subPath: stablecoin.json
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+      volumes:
+        - name: stablecoin-config
+          configMap:
+            name: {{ .Release.Name }}-contracts
+{{- end }}
